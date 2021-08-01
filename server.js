@@ -49,17 +49,17 @@ const connection = mysql.createConnection({
         inquirer
         .prompt([
             {
-                name: 'firstName',
+                name: 'first_name',
                 type: 'input',
                 message: 'what is the first name of the employee you would like to add?',
             },
             {
-                name: 'lastName',
+                name: 'last_name',
                 type:'input',
                 message:'What is the last name of the employee you would like to add?',
             },
             {
-                name:'roleId',
+                name:'role_id',
                 type:'input',
                 message:'what is the employees role ID?',
                 validate(value) {
@@ -70,7 +70,7 @@ const connection = mysql.createConnection({
                   },
             },
             {
-                name:'managerId',
+                name:'manager_id',
                 type:'input',
                 message:'what is the manager id?',
                 validate(value) {
@@ -85,10 +85,10 @@ const connection = mysql.createConnection({
             connection.query(
                 'INSERT INTO employee SET ?',
                 {
-                    first_name: answer.firstName,
-                    last_name: answer.lastName,
-                    role_id: answer.roleId,
-                    manager_id: answer.managerId,
+                    first_name: answer.first_name,
+                    last_name: answer.last_name,
+                    role_id: answer.role_id,
+                    manager_id: answer.manager_id,
                 },
                 (err) => {
                     if (err) throw err;
@@ -104,7 +104,7 @@ const connection = mysql.createConnection({
             {
                 name: 'title',
                 type:'input',
-                message:'What is the title of the role you would liek to add?',
+                message:'What is the title of the role you would like to add?',
             },
             {
                 name:'salary',
@@ -118,7 +118,7 @@ const connection = mysql.createConnection({
                   },
             },
             {
-                name:'departmentId',
+                name:'department_id',
                 type:'input',
                 message:'what is the department ID?',
                 validate(value) {
@@ -132,5 +132,48 @@ const connection = mysql.createConnection({
 
             
         ])
+        .then((answer) => {
+          connection.query(
+          'INSERT INTO role SET ?',
+            {
+              title: answer.title,
+              salary: answer.salary,
+              department_id: answer.department_id
+            },
+            (err) => {
+              if (err) throw err;
+              console.log('your role has been added!');
+              start();
+            }
+          )
+        })
+    }
+    const addDepartment = () => {
+      inquirer
+      .prompt([
+        {
+          name: 'name',
+          type: 'input',
+          message: 'What is the name of the department you would like to add?'
+        },
+        {
+          name: 'id',
+          type: 'input',
+          message: 'what is the ID of the department you would like to add?'
+        }
+      ])
+      .then((answer) => {
+        connection.query(
+          'INSERT INTO department SET ?',
+          {
+            name: answer.name,
+            id: answer.id
+          },
+          (err) => {
+            if (err) throw err;
+            console.log('Your department has been added!')
+          }
+        )
+      })
     }
     start();
