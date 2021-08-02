@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 
-const connection = mysql.createConnection({
+  const connection = mysql.createConnection({
     host: 'localhost',
   
     // Your port; if not 3306
@@ -100,7 +100,7 @@ const connection = mysql.createConnection({
     };
     const addRole = () => {
         inquirer
-        .promt([
+        .prompt([
             {
                 name: 'title',
                 type:'input',
@@ -174,6 +174,70 @@ const connection = mysql.createConnection({
             console.log('Your department has been added!')
           }
         )
-      })
-    }
+        start();
+      });
+    };
+    const viewEmployee= () => {
+      let query = `SELECT * FROM employee`
+      connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+         start();
+      });
+    };
+    const viewRole = () => {
+      let query = `SELECT * FROM role`
+      connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+         start();
+      });
+    };
+    const updateEmployeeRole = () => {
+      connection.query("SELECT * FROM role", (err, data) => {
+          if(err) throw err;
+          // console.log(data);
+          const choices = data.map((role) => (role.title));
+          console.log(choices);
+  
+          inquirer
+          .prompt([
+                {
+                    type:"list",
+                    name:"update",
+                    message:"Which employee role would you like to be updated?",
+                    choices: choices
+                },
+                {
+                    type:"input",
+                    name:"updatedRole",
+                    message:"What would you like to rename this role?"
+                },
+            ])
+            .then(function(data){
+              console.log(data.updatedRole);
+              connection.query(`UPDATE role SET ? WHERE ?`, 
+                  [
+                      {title: `${data.updatedRole}`}, 
+                      {title: `${data.update}`}
+                  ], 
+                  (err, res) => {
+                      if (err) throw err;
+                      console.log(res);
+                  start();
+              }); 
+            });
+      });
+    };
+    function viewDepartment() {
+      connection.query("SELECT * FROM department", (err, data) => {
+          if (err) throw err;
+          console.log("these are your current departments");
+          console.table(data);
+          start();
+      });
+    };
     start();
+
+    
+    
